@@ -1,0 +1,40 @@
+{
+  "name": "zero-config/d",
+  "description": "Dice rolling library",
+  "type": "library",
+  "keywords": ["d", "dice", "die", "game", "rolling", "gamble", "gambling", "d6", "d20"],
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Jan-Marten de Boer",
+      "email": "github@johmanx.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "ZeroConfig\\D\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ZeroConfig\\D\\Tests\\": "tests"
+    }
+  },
+  "require": {
+    "php": "^7.0",
+    "ext-SPL": "^7.0",
+    "hylianshield/number-generator": "^1.0.0"
+  },
+  "require-dev": {
+    "raveren/kint": "^1.0.10",
+    "phpunit/phpunit": "^5.7.9"
+  },
+  "archive": {
+    "exclude": [
+      "phpunit.xml",
+      "tests"
+    ]
+  }
+}
