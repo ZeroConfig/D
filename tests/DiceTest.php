@@ -22,6 +22,24 @@ class DiceTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @depends clone testConstructor
+     *
+     * @param Dice $dice
+     *
+     * @return void
+     * @covers ::setModifier
+     * @covers ::getModifier
+     */
+    public function testGetSetModifier(Dice $dice)
+    {
+        $dice->setModifier(1337);
+        $this->assertEquals(1337, $dice->getModifier());
+
+        $dice->setModifier(42);
+        $this->assertEquals(42, $dice->getModifier());
+    }
+
+    /**
      * @return \PHPUnit_Framework_MockObject_MockObject|DieInterface
      */
     private function createDie(): DieInterface

@@ -6,9 +6,10 @@ interface DiceFactoryInterface
     /**
      * Get dice for the given list of eyes.
      *
+     * @param int   $modifier
      * @param int[] ...$eyes
      *
      * @return DiceInterface
      */
-    public function createDice(int ...$eyes): DiceInterface;
+    public function createDice(int $modifier, int ...$eyes): DiceInterface;
 }

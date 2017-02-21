@@ -5,6 +5,9 @@ use ArrayIterator;
 
 class Dice extends AbstractIteratorProxy implements DiceInterface
 {
+    /** @var int */
+    private $modifier = 0;
+
     /**
      * Constructor.
      *
@@ -40,5 +43,27 @@ class Dice extends AbstractIteratorProxy implements DiceInterface
     public function current(): DieInterface
     {
         return $this->getIterator()->current();
+    }
+
+    /**
+     * Get the modifier for the current dice.
+     *
+     * @return int
+     */
+    public function getModifier(): int
+    {
+        return $this->modifier;
+    }
+
+    /**
+     * Set the modifier for the current dice.
+     *
+     * @param int $modifier
+     *
+     * @return void
+     */
+    public function setModifier(int $modifier)
+    {
+        $this->modifier = $modifier;
     }
 }

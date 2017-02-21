@@ -40,13 +40,14 @@ class DieFactory implements DieFactoryInterface, DiceFactoryInterface
     /**
      * Get dice for the given list of eyes.
      *
+     * @param int   $modifier
      * @param int[] ...$eyes
      *
      * @return DiceInterface
      */
-    public function createDice(int ...$eyes): DiceInterface
+    public function createDice(int $modifier, int ...$eyes): DiceInterface
     {
-        return new Dice(
+        $dice = new Dice(
             ...array_map(
                 function (int $numEyes) : DieInterface {
                     return $this->createDie($numEyes);
@@ -54,5 +55,9 @@ class DieFactory implements DieFactoryInterface, DiceFactoryInterface
                 $eyes
             )
         );
+
+        $dice->setModifier($modifier);
+
+        return $dice;
     }
 }

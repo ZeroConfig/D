@@ -23,10 +23,10 @@ class Interpreter implements DiceInterpreterInterface
      *
      * E.g.:
      *
-     * '6' => [6]
-     * '2d12' => [12, 12]
-     * '2 d12' => [12, 12]
-     * 'd20' => [20]
+     * '6' => [0, 6]
+     * '2d12' => [0, 12, 12]
+     * '2 d12' => [0, 12, 12]
+     * 'd20+10' => [10, 20]
      *
      * @param string $diceConfiguration
      *
@@ -34,21 +34,22 @@ class Interpreter implements DiceInterpreterInterface
      */
     private function interpretDicePerEyes(string $diceConfiguration): array
     {
-        $numDice = 1;
-        $numEyes = 0;
+        $numDice  = 1;
+        $numEyes  = 0;
+        $modifier = 0;
 
-        if (preg_match('/^(\d+)$/', $diceConfiguration, $matches)) {
-            $numEyes = (int)next($matches);
-        } elseif (preg_match(
-            '/^(\d*)\s?d(\d+)$/i',
-            $diceConfiguration,
+        if (preg_match(
+            '/^(\d*?)\s?d?(\d+)(\s?\+(\d+))?$/i',
+            trim($diceConfiguration),
             $matches
         )) {
             $numDice = (int)next($matches) ?: 1;
             $numEyes = (int)next($matches);
+            next($matches);
+            $modifier = (int)next($matches);
         }
 
-        return array_fill(0, $numDice, $numEyes);
+        return [$modifier] + array_fill(1, $numDice, $numEyes);
     }
 
     /**
@@ -79,21 +80,34 @@ class Interpreter implements DiceInterpreterInterface
 
         foreach ($diceConfigurations as $config) {
             $list    = $this->interpretDicePerEyes($config);
-            $numEyes = current($list);
+            $numEyes = next($list);
 
             if (!array_key_exists($numEyes, $dice)) {
                 $dice[$numEyes] = [];
             }
 
-            $dice[$numEyes] = array_merge($dice[$numEyes], $list);
+            $dice[$numEyes][] = $list;
         }
 
         // Make it so the dice with highest number of eyes start.
         krsort($dice, SORT_NUMERIC);
 
         return array_map(
-            function (array $eyes) : DiceInterface {
-                return $this->diceFactory->createDice(...$eyes);
+            function (array $configurations) : DiceInterface {
+                $eyes     = [];
+                $modifier = 0;
+
+                foreach ($configurations as $configuration) {
+                    $modCheck = array_shift($configuration);
+
+                    if ($modCheck > 0) {
+                        $modifier = $modCheck;
+                    }
+
+                    $eyes = array_merge($eyes, $configuration);
+                }
+
+                return $this->diceFactory->createDice($modifier, ...$eyes);
             },
             $dice
         );

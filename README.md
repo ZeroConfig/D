@@ -9,7 +9,7 @@ an application implementing **D**.
 # Installation
 
 ```bash
-composer require zero-config/d:^1.0
+composer require zero-config/d:^2.0
 ```
 
 # Entities
@@ -71,8 +71,8 @@ $interpreter = new Interpreter(
     )    
 );
 
-$dice  = $interpreter->interpretDice('2d20');
-$total = 0;
+$dice  = $interpreter->interpretDice('2d20+10');
+$total = $dice->getModifier();
 
 foreach ($dice->roll() as $roll) {
     $total += $roll->getValue();
@@ -81,7 +81,7 @@ foreach ($dice->roll() as $roll) {
 echo $total;
 ```
 
-This will result in a number between `1` and `40`.
+This will result in a number between `11` and `50`.
 
 One could make this a bit more verbose by iterating over the dice:
 
@@ -95,6 +95,7 @@ foreach ($dice as $die) {
         $die->roll()->getValue()
     ) . PHP_EOL;
 }
+echo sprintf('+%d', $dice->getModifier());
 ```
 
 This will output something like:
@@ -102,6 +103,7 @@ This will output something like:
 ```
 d20 -> 19
 d20 -> 4
++10
 ```
 
 # Complex interpretations.
@@ -112,13 +114,13 @@ grouped and sorted, the interpreter has an additional method, `interpretList`.
 ```php
 <?php
 /** ZeroConfig\D\DiceInterpreterInterface $interpreter */
-$list = $interpreter->interpretList('3d6', 'D20', '4', '1 d4');
+$list = $interpreter->interpretList('3d6', 'D20', '4+10', '4+8', '1 d4');
 ```
 
 The list will contain the following structure:
 
 ```
-20 => Dice => Die x1,
-6  => Dice => Die x3,
-4  => Dice => Die x2
+20 => Dice => Die x1 (+0),
+6  => Dice => Die x3 (+0),
+4  => Dice => Die x3 (+8)
 ```

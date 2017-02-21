@@ -50,6 +50,11 @@ class DieFactoryTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateDice(DieFactory $factory): DiceInterface
     {
-        return $factory->createDice(6, 4, 2);
+        $dice = $factory->createDice(6, 4, 2);
+
+        $this->assertEquals(6, $dice->getModifier());
+        $this->assertCount(2, $dice);
+
+        return $dice;
     }
 }
